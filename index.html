@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Management System</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+    <!-- ===================== LOGIN / REGISTER ===================== -->
+    <div id="auth-container" class="auth-container">
+        <div class="auth-card">
+            <h1 class="auth-title">Contact Management System</h1>
+            <p class="auth-subtitle">Manage your contacts efficiently</p>
+
+            <!-- Login Form -->
+            <form id="login-form" class="auth-form">
+                <h2>Login</h2>
+                <div class="form-group">
+                    <label for="login-email">Email</label>
+                    <input type="email" id="login-email" placeholder="you@example.com" required>
+                    <span class="error-msg" id="login-email-error"></span>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" placeholder="Enter password" required>
+                    <span class="error-msg" id="login-password-error"></span>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Login</button>
+                <p class="auth-switch">Don't have an account? <a href="#" id="show-register">Register</a></p>
+            </form>
+
+            <!-- Register Form -->
+            <form id="register-form" class="auth-form hidden">
+                <h2>Create Account</h2>
+                <div class="form-group">
+                    <label for="reg-name">Full Name</label>
+                    <input type="text" id="reg-name" placeholder="John Doe" required>
+                    <span class="error-msg" id="reg-name-error"></span>
+                </div>
+                <div class="form-group">
+                    <label for="reg-email">Email</label>
+                    <input type="email" id="reg-email" placeholder="you@example.com" required>
+                    <span class="error-msg" id="reg-email-error"></span>
+                </div>
+                <div class="form-group">
+                    <label for="reg-password">Password</label>
+                    <input type="password" id="reg-password" placeholder="Min 6 characters" required>
+                    <span class="error-msg" id="reg-password-error"></span>
+                </div>
+                <div class="form-group">
+                    <label for="reg-confirm">Confirm Password</label>
+                    <input type="password" id="reg-confirm" placeholder="Re-enter password" required>
+                    <span class="error-msg" id="reg-confirm-error"></span>
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="reg-admin"> Register as Admin
+                    </label>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Register</button>
+                <p class="auth-switch">Already have an account? <a href="#" id="show-login">Login</a></p>
+            </form>
+        </div>
+    </div>
+
+    <!-- ===================== MAIN APPLICATION ===================== -->
+    <div id="app-container" class="app-container hidden">
+        <!-- Sidebar Navigation -->
+        <nav id="sidebar" class="sidebar">
+            <div class="sidebar-header">
+                <h2>CMS</h2>
+                <button id="sidebar-toggle" class="sidebar-toggle" aria-label="Toggle sidebar">&#9776;</button>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#" class="nav-link active" data-page="dashboard"><span class="nav-icon">&#128202;</span> Dashboard</a></li>
+                <li><a href="#" class="nav-link" data-page="contacts"><span class="nav-icon">&#128101;</span> Contacts</a></li>
+                <li><a href="#" class="nav-link" data-page="add-contact"><span class="nav-icon">&#10133;</span> Add Contact</a></li>
+                <li><a href="#" class="nav-link" data-page="profile"><span class="nav-icon">&#128100;</span> Profile</a></li>
+                <li id="admin-nav" class="hidden"><a href="#" class="nav-link" data-page="admin"><span class="nav-icon">&#9881;</span> Admin</a></li>
+            </ul>
+            <div class="sidebar-footer">
+                <span id="current-user-name" class="user-label"></span>
+                <button id="logout-btn" class="btn btn-outline btn-sm">Logout</button>
+            </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main id="main-content" class="main-content">
+
+            <!-- ===== Dashboard Page ===== -->
+            <section id="page-dashboard" class="page">
+                <h1>Dashboard</h1>
+                <div class="stats-grid">
+                    <div class="stat-card stat-total">
+                        <h3>Total Contacts</h3>
+                        <span id="stat-total" class="stat-number">0</span>
+                    </div>
+                    <div class="stat-card stat-pending">
+                        <h3>Pending</h3>
+                        <span id="stat-pending" class="stat-number">0</span>
+                    </div>
+                    <div class="stat-card stat-progress">
+                        <h3>In Progress</h3>
+                        <span id="stat-progress" class="stat-number">0</span>
+                    </div>
+                    <div class="stat-card stat-resolved">
+                        <h3>Resolved</h3>
+                        <span id="stat-resolved" class="stat-number">0</span>
+                    </div>
+                </div>
+
+                <div class="dashboard-section">
+                    <h2>Recent Contacts</h2>
+                    <div id="recent-contacts" class="table-wrapper">
+                        <p class="empty-state">No contacts yet. <a href="#" data-page="add-contact" class="nav-link">Add one now</a>.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== Contacts List Page ===== -->
+            <section id="page-contacts" class="page hidden">
+                <h1>Contacts</h1>
+                <div class="toolbar">
+                    <div class="search-bar">
+                        <input type="text" id="search-input" placeholder="Search by name, email, or phone...">
+                    </div>
+                    <div class="filter-bar">
+                        <select id="filter-status">
+                            <option value="all">All Statuses</option>
+                            <option value="Pending">Pending</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="Resolved">Resolved</option>
+                        </select>
+                        <select id="filter-category">
+                            <option value="all">All Categories</option>
+                            <option value="General">General</option>
+                            <option value="Support">Support</option>
+                            <option value="Sales">Sales</option>
+                            <option value="Feedback">Feedback</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="contacts-list" class="table-wrapper">
+                    <p class="empty-state">No contacts found.</p>
+                </div>
+            </section>
+
+            <!-- ===== Add / Edit Contact Page ===== -->
+            <section id="page-add-contact" class="page hidden">
+                <h1 id="contact-form-title">Add New Contact</h1>
+                <form id="contact-form" class="form-card" novalidate>
+                    <input type="hidden" id="contact-id">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="contact-first-name">First Name <span class="required">*</span></label>
+                            <input type="text" id="contact-first-name" maxlength="50" required>
+                            <span class="error-msg" id="contact-first-name-error"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="contact-last-name">Last Name <span class="required">*</span></label>
+                            <input type="text" id="contact-last-name" maxlength="50" required>
+                            <span class="error-msg" id="contact-last-name-error"></span>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="contact-email">Email <span class="required">*</span></label>
+                            <input type="email" id="contact-email" maxlength="100" required>
+                            <span class="error-msg" id="contact-email-error"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="contact-phone">Phone <span class="required">*</span></label>
+                            <input type="tel" id="contact-phone" maxlength="20" required>
+                            <span class="error-msg" id="contact-phone-error"></span>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="contact-category">Category</label>
+                            <select id="contact-category">
+                                <option value="General">General</option>
+                                <option value="Support">Support</option>
+                                <option value="Sales">Sales</option>
+                                <option value="Feedback">Feedback</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="contact-status">Status</label>
+                            <select id="contact-status">
+                                <option value="Pending">Pending</option>
+                                <option value="In Progress">In Progress</option>
+                                <option value="Resolved">Resolved</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="contact-message">Message</label>
+                        <textarea id="contact-message" rows="4" maxlength="500" placeholder="Enter your message (max 500 characters)"></textarea>
+                        <span class="char-count"><span id="msg-char-count">0</span>/500</span>
+                        <span class="error-msg" id="contact-message-error"></span>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary" id="contact-submit-btn">Submit Contact</button>
+                        <button type="button" class="btn btn-outline" id="contact-cancel-btn">Cancel</button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- ===== View Contact Detail Page ===== -->
+            <section id="page-view-contact" class="page hidden">
+                <div class="detail-header">
+                    <h1 id="view-contact-name">Contact Details</h1>
+                    <div class="detail-actions">
+                        <button class="btn btn-primary btn-sm" id="edit-contact-btn">Edit</button>
+                        <button class="btn btn-danger btn-sm" id="delete-contact-btn">Delete</button>
+                        <button class="btn btn-outline btn-sm" id="back-contacts-btn">Back</button>
+                    </div>
+                </div>
+                <div class="detail-card">
+                    <div class="detail-row"><strong>Email:</strong> <span id="view-contact-email"></span></div>
+                    <div class="detail-row"><strong>Phone:</strong> <span id="view-contact-phone"></span></div>
+                    <div class="detail-row"><strong>Category:</strong> <span id="view-contact-category"></span></div>
+                    <div class="detail-row"><strong>Status:</strong> <span id="view-contact-status" class="status-badge"></span></div>
+                    <div class="detail-row"><strong>Message:</strong> <p id="view-contact-message"></p></div>
+                    <div class="detail-row"><strong>Created:</strong> <span id="view-contact-created"></span></div>
+                    <div class="detail-row"><strong>Updated:</strong> <span id="view-contact-updated"></span></div>
+                </div>
+            </section>
+
+            <!-- ===== Profile Page ===== -->
+            <section id="page-profile" class="page hidden">
+                <h1>My Profile</h1>
+                <form id="profile-form" class="form-card" novalidate>
+                    <div class="form-group">
+                        <label for="profile-name">Full Name</label>
+                        <input type="text" id="profile-name" maxlength="100" required>
+                        <span class="error-msg" id="profile-name-error"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="profile-email">Email</label>
+                        <input type="email" id="profile-email" disabled>
+                        <small>Email cannot be changed.</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="profile-phone">Phone</label>
+                        <input type="text" id="profile-phone" maxlength="20">
+                    </div>
+                    <div class="form-group">
+                        <label for="profile-bio">Bio</label>
+                        <textarea id="profile-bio" rows="3" maxlength="200" placeholder="Tell us about yourself"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Role: <strong id="profile-role"></strong></label>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Update Profile</button>
+                </form>
+            </section>
+
+            <!-- ===== Admin Page ===== -->
+            <section id="page-admin" class="page hidden">
+                <h1>Admin Panel</h1>
+                <div class="admin-tabs">
+                    <button class="tab-btn active" data-tab="admin-contacts">All Contacts</button>
+                    <button class="tab-btn" data-tab="admin-users">Users</button>
+                </div>
+
+                <!-- Admin: All Contacts -->
+                <div id="admin-contacts" class="tab-panel">
+                    <div class="toolbar">
+                        <div class="search-bar">
+                            <input type="text" id="admin-search-input" placeholder="Search contacts...">
+                        </div>
+                        <div class="filter-bar">
+                            <select id="admin-filter-status">
+                                <option value="all">All Statuses</option>
+                                <option value="Pending">Pending</option>
+                                <option value="In Progress">In Progress</option>
+                                <option value="Resolved">Resolved</option>
+                            </select>
+                            <button class="btn btn-danger btn-sm" id="admin-delete-selected">Delete Selected</button>
+                        </div>
+                    </div>
+                    <div id="admin-contacts-list" class="table-wrapper">
+                        <p class="empty-state">No contacts found.</p>
+                    </div>
+                </div>
+
+                <!-- Admin: Users -->
+                <div id="admin-users" class="tab-panel hidden">
+                    <div id="admin-users-list" class="table-wrapper">
+                        <p class="empty-state">No users found.</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast hidden"></div>
+
+    <!-- Confirm Dialog -->
+    <div id="confirm-dialog" class="modal-overlay hidden">
+        <div class="modal-card">
+            <h3 id="confirm-title">Confirm</h3>
+            <p id="confirm-message">Are you sure?</p>
+            <div class="modal-actions">
+                <button class="btn btn-danger" id="confirm-yes">Yes</button>
+                <button class="btn btn-outline" id="confirm-no">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/storage.js"></script>
+    <script src="js/validation.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/contacts.js"></script>
+    <script src="js/dashboard.js"></script>
+    <script src="js/admin.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
